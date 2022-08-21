@@ -1,0 +1,409 @@
+---
+title: "Chapter 8"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+```{r}
+require(tidymodels)
+data(ames)
+ames <- 
+  mutate(ames, Sale_Price = log10(Sale_Price))
+
+set.seed(502)
+ames_split <- initial_split(ames, prop = 0.80, strata = Sale_Price)
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+
+lm_model <- 
+  linear_reg() |> 
+  set_engine("lm")
+
+lm_wflow <- 
+  workflow() |> 
+  add_model(lm_model) |> 
+  add_variables(
+    outcomes = Sale_Price, 
+    predictors = c(Longitude, Latitude)
+  )
+
+lm_fit <- 
+  fit(lm_wflow, ames_train)
+
+theme_set(
+  theme_light()
+)
+
+```
+
+## Feature Engineering with `{recipes}`
+
+Takes this:
+
+`lm(Sale_Price ~ Neighborhood + log10(Gr_Liv_Area) + Year_Built + Bldg_Type, data = ames)`
+
+to this:
+
+```{r}
+tidymodels_prefer()
+
+simple_ames <- 
+  recipe(
+    Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type,
+    data = ames_train
+  ) |> 
+  step_log(Gr_Liv_Area, base = 10) |> 
+  step_dummy(all_nominal_predictors())
+
+simple_ames
+
+```
+
+### Adding `recipes` object to `workflow`
+
+```{r}
+#| eval: false
+#| echo: true
+lm_wflow |> 
+  add_recipe(simple_ames)
+```
+
+### Whoops. Only one preprocessor at a time. Have to update.
+
+```{r}
+lm_wflow <- 
+  lm_wflow |> 
+  remove_variables() |> 
+  add_recipe(simple_ames)
+
+lm_wflow
+```
+
+### ...and Fit
+
+```{r}
+lm_fit <- fit(lm_wflow, ames_train)
+```
+
+### ...and Predict
+
+```{r}
+predict(lm_fit, ames_test |> slice(1:3))
+```
+
+### Extract recipe
+
+```{r}
+lm_fit |> 
+  extract_recipe(estimated = TRUE)
+```
+
+### And tidy model fit
+
+```{r}
+lm_fit |> 
+  extract_fit_parsnip() |> 
+  tidy() |> 
+  slice(1:5)
+```
+
+### Encoding Qualitative Data in Numeric Format
+
+-   `step_unknown()` for changing missing to dedicated factor level
+
+-   `step_novel()` allots new level for new factor levels encountered in future
+
+-   `step_other()` throws infrequently occurring values by threshold to `other`
+
+```{r}
+ggplot(
+  ames_train,
+  aes(y = Neighborhood)
+  ) +
+  geom_bar()
+```
+
+### Update `recipe`
+
+```{r}
+simple_ames <- 
+  recipe(
+    Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type,
+    data = ames_train
+  ) |> 
+  step_log(Gr_Liv_Area, base = 10) |> 
+  step_other(Neighborhood, threshold = 0.01) |> 
+  step_dummy(all_nominal_predictors())
+  
+simple_ames
+```
+
+Note for including all levels of factor, use `one-hot` encoding with the `one_hot` argument in `step_dummy`.
+
+### Interaction Terms
+
+-   Involve >= 2 predictors
+
+-   Include interaction along with the original predictors (aka **main effects**)
+
+```{r}
+
+ggplot(
+  ames_train, 
+  aes(
+    x = Gr_Liv_Area,
+    y = 10^Sale_Price # Exponentiate to convert logged price back
+    )
+  ) +
+  geom_point(alpha = 0.2) +
+  facet_wrap(~ Bldg_Type) +
+  geom_smooth(
+    method = lm,
+    formula = y ~ x, 
+    se = FALSE, 
+    color = "lightblue"
+  ) +
+  scale_x_log10() +
+  scale_y_log10(labels = scales::comma) +
+  labs(
+    x = "Gross Living Area",
+    y = "Sale Price USD"
+  ) 
+```
+
+### Base R
+
+`Sale_Price ~ Neighborhood + log10(Gr_Liv_Area) + Bldg_Type + log10(Gr_Liv_Area):Bldg_Type`
+
+**OR**
+
+`Sale_Price ~ Neighborhood + log10(Gr_Liv_Area) * Bldg_Type`
+
+### `step_interact(~ Interaction Terms)`
+
+```{r}
+simple_ames <- 
+  recipe(
+    Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type, 
+    data = ames_train
+  ) |> 
+  step_log(Gr_Liv_Area, base = 10) |> 
+  step_other(Neighborhood, threshold = 0.01) |> 
+  step_dummy(all_nominal_predictors()) |> 
+  step_interact( ~ Gr_Liv_Area:starts_with("Bldg_Type_"))
+
+simple_ames
+```
+
+### NB: Always Dummy Factors First Before Setting Interaction Terms
+
+### NB: Order Matters!! e.g., Log Transforms, etc.
+
+### Splines
+
+```{r}
+require(patchwork)
+require(splines)
+
+plot_smoother <- function(deg_free) {
+  
+  ggplot(
+    ames_train, 
+    aes(
+      x = Latitude, 
+      y = 10^Sale_Price
+      )
+    ) +
+    geom_point(alpha = 0.2) +
+    scale_y_log10(
+      labels = scales::dollar
+    ) +
+    geom_smooth(
+      method = lm, 
+      formula = y ~ ns(x, df = deg_free),
+      color = "lightblue",
+      se = FALSE
+    ) +
+    labs(
+      title = paste(deg_free, "Spline Terms"),
+      y = "Sale Price (USD)"
+    )
+}
+
+( plot_smoother(2) + plot_smoother(5) ) / ( plot_smoother(20) + plot_smoother(100))
+
+```
+
+```{r}
+recipe(
+  Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + Latitude,
+  data = ames_train
+  ) |> 
+  step_log(Gr_Liv_Area, base = 10) |> 
+  step_other(Neighborhood, threshold = 0.01) |> 
+  step_dummy(all_nominal_predictors()) |> 
+  step_interact(~ Gr_Liv_Area:starts_with("Bldg_Type_")) |> 
+  step_ns(Latitude, deg_free = 20)
+```
+
+### Feature Extraction
+
+-   e.g., PCA: linear extraction method
+
+    -   Each new feature is linear combination of original predictors
+
+    -   Each PC *aka* PCA scores are uncorrelated with one another
+
+-   Assumes all predictors are **on the same scale**
+
+```{r}
+#| eval: false
+# Use regex to capture house size predictors
+step_pca(matches("(SF$)|(Gr_Liv)"))
+```
+
+### Row Sampling
+
+-   **Downsample:** keep minority class and random sample of majority class
+
+-   **Upsample:** samples from minority class to balance the classes.
+
+-   Use `themis` package
+
+```{r}
+#| eval: false
+require(themis)
+step_downsample(outcome_column_name)
+```
+
+-   `step_filter(), step_sample(), step_slice(), step_arrange()`
+
+-   **SET** `skip = TRUE` this skips step when using `predict()` but still applied using `fit()`
+
+### General Tranformations
+
+-   `step_mutate()` use for ratios
+
+    -   e.g., `step_mutate(Bedroom_AbvGR / Full_Bath)`
+
+### NLP
+
+-   `textrecipes` package
+
+### Tidy a `recipe()`
+
+```{r}
+ames_rec <- 
+  recipe(
+    Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + Latitude + Longitude, 
+    data = ames_train
+  ) |> 
+  step_log(Gr_Liv_Area, base = 10) |> 
+  step_other(Neighborhood, threshold = 0.01) |> 
+  step_dummy(all_nominal_predictors()) |> 
+  step_interact( ~ Gr_Liv_Area:starts_with("Bldg_Type_")) |> 
+  step_ns(Latitude, Longitude, deg_free = 20)
+```
+
+```{r}
+tidy(ames_rec)
+```
+
+```{r}
+tidy(ames_rec$steps[[5]])
+```
+
+### Add `id` to `recipe`
+
+```{r}
+ames_rec <- 
+  recipe(
+    Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + Latitude + Longitude, 
+    data = ames_train
+  ) |> 
+  step_log(Gr_Liv_Area, base = 10) |> 
+  step_other(Neighborhood, threshold = 0.01, id = "my_id") |> 
+  step_dummy(all_nominal_predictors()) |> 
+  step_interact( ~ Gr_Liv_Area:starts_with("Bldg_Type_")) |> 
+  step_ns(Latitude, Longitude, deg_free = 20)
+```
+
+### Refit Workflow
+
+```{r}
+lm_wflow <- 
+  workflow() |> 
+  add_model(lm_model) |> 
+  add_recipe(ames_rec)
+
+lm_fit <- fit(lm_wflow, ames_train)
+```
+
+### Extract Recipe
+
+```{r}
+estimated_recipe <- 
+  lm_fit |> 
+  extract_recipe(estimated = TRUE)
+
+tidy(estimated_recipe, id = "my_id")
+```
+
+```{r}
+tidy(estimated_recipe, number = 2)
+```
+
+### Column Roles
+
+-   `add_role()`
+
+-   `remove_role()`
+
+-   `update_role()`
+
+```{r}
+#| eval: false
+ames_rec |> 
+  update_role(address, new_role = "street address") 
+```
+
+### Code for Next Chapters
+
+```{r}
+require(tidymodels) 
+data(ames) 
+ames <- ames |> 
+  mutate(
+    Sale_Price = log10(Sale_Price)
+  )
+
+set.seed(502)
+ames_split <- initial_split(ames, prop = 0.8, strata = Sale_Price)
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+
+ames_rec <- 
+  recipe(
+    Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + Latitude + Longitude,
+    data = ames_train
+  ) |> 
+  step_log(Gr_Liv_Area, base = 10) |> 
+  step_other(Neighborhood, threshold = 0.01) |> 
+  step_dummy(all_nominal_predictors()) |> 
+  step_interact( ~ Gr_Liv_Area:starts_with("Bldg_Type_")) |> 
+  step_ns(Latitude, Longitude, deg_free = 20)
+
+lm_model <- 
+  linear_reg() |> 
+  set_engine("lm")
+
+lm_wflow <- 
+  workflow() |> 
+  add_model(lm_model) |> 
+  add_recipe(ames_rec)
+
+lm_fit <- fit(lm_wflow, ames_train)
+```

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Chapter 7</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="006_chapter_7_files/libs/clipboard/clipboard.min.js"></script>
+<script src="006_chapter_7_files/libs/quarto-html/quarto.js"></script>
+<script src="006_chapter_7_files/libs/quarto-html/popper.min.js"></script>
+<script src="006_chapter_7_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="006_chapter_7_files/libs/quarto-html/anchor.min.js"></script>
+<link href="006_chapter_7_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="006_chapter_7_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="006_chapter_7_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="006_chapter_7_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="006_chapter_7_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#workflows" id="toc-workflows" class="nav-link active" data-scroll-target="#workflows"> <span class="header-section-number">1</span> Workflows</a>
+  <ul class="collapse">
+  <li><a href="#basicscreate-model-and-add-to-workflow" id="toc-basicscreate-model-and-add-to-workflow" class="nav-link" data-scroll-target="#basicscreate-model-and-add-to-workflow"> <span class="header-section-number">1.1</span> Basics—Create Model and Add to Workflow</a></li>
+  <li><a href="#add-preprocessing-here-just-a-formula-bc-simple-model" id="toc-add-preprocessing-here-just-a-formula-bc-simple-model" class="nav-link" data-scroll-target="#add-preprocessing-here-just-a-formula-bc-simple-model"> <span class="header-section-number">1.2</span> Add Preprocessing (here just a formula b/c simple model)</a></li>
+  <li><a href="#fit-model-in-workflow" id="toc-fit-model-in-workflow" class="nav-link" data-scroll-target="#fit-model-in-workflow"> <span class="header-section-number">1.3</span> Fit Model in Workflow</a></li>
+  <li><a href="#use-model-to-make-predictions" id="toc-use-model-to-make-predictions" class="nav-link" data-scroll-target="#use-model-to-make-predictions"> <span class="header-section-number">1.4</span> Use Model to Make Predictions</a></li>
+  <li><a href="#model-and-preprocessor-can-be-removedupdated" id="toc-model-and-preprocessor-can-be-removedupdated" class="nav-link" data-scroll-target="#model-and-preprocessor-can-be-removedupdated"> <span class="header-section-number">1.5</span> Model and Preprocessor Can be Removed/Updated</a></li>
+  <li><a href="#add-raw-i.e.-un-preprocessed-variables-to-workflow" id="toc-add-raw-i.e.-un-preprocessed-variables-to-workflow" class="nav-link" data-scroll-target="#add-raw-i.e.-un-preprocessed-variables-to-workflow"> <span class="header-section-number">1.6</span> Add Raw (i.e., un-preprocessed) Variables to <code>workflow</code></a></li>
+  <li><a href="#and-fit-model" id="toc-and-fit-model" class="nav-link" data-scroll-target="#and-fit-model"> <span class="header-section-number">1.7</span> …and Fit Model</a></li>
+  <li><a href="#special-formulas-and-inline-functions" id="toc-special-formulas-and-inline-functions" class="nav-link" data-scroll-target="#special-formulas-and-inline-functions"> <span class="header-section-number">1.8</span> Special Formulas and Inline Functions</a></li>
+  <li><a href="#problem-with-model.matrix" id="toc-problem-with-model.matrix" class="nav-link" data-scroll-target="#problem-with-model.matrix"> <span class="header-section-number">1.9</span> Problem with <code>model.matrix</code></a></li>
+  <li><a href="#using-multilevelmod" id="toc-using-multilevelmod" class="nav-link" data-scroll-target="#using-multilevelmod"> <span class="header-section-number">1.10</span> Using <code>multilevelmod</code></a></li>
+  <li><a href="#using-strata-in-survival-analysis" id="toc-using-strata-in-survival-analysis" class="nav-link" data-scroll-target="#using-strata-in-survival-analysis"> <span class="header-section-number">1.11</span> Using <code>strata()</code> in Survival Analysis</a></li>
+  <li><a href="#multiple-workflows" id="toc-multiple-workflows" class="nav-link" data-scroll-target="#multiple-workflows"> <span class="header-section-number">1.12</span> Multiple Workflows</a></li>
+  <li><a href="#examine" id="toc-examine" class="nav-link" data-scroll-target="#examine"> <span class="header-section-number">1.13</span> Examine</a></li>
+  <li><a href="#extract-workflow" id="toc-extract-workflow" class="nav-link" data-scroll-target="#extract-workflow"> <span class="header-section-number">1.14</span> Extract <code>workflow</code></a></li>
+  <li><a href="#fit-models" id="toc-fit-models" class="nav-link" data-scroll-target="#fit-models"> <span class="header-section-number">1.15</span> Fit Models</a></li>
+  <li><a href="#examine-fit" id="toc-examine-fit" class="nav-link" data-scroll-target="#examine-fit"> <span class="header-section-number">1.16</span> Examine Fit</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Chapter 7</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: tidymodels</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.0.0 ──</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ broom        1.0.0     ✔ recipes      1.0.1
+✔ dials        1.0.0     ✔ rsample      1.0.0
+✔ dplyr        1.0.9     ✔ tibble       3.1.8
+✔ ggplot2      3.3.6     ✔ tidyr        1.2.0
+✔ infer        1.0.2     ✔ tune         1.0.0
+✔ modeldata    1.0.0     ✔ workflows    1.0.0
+✔ parsnip      1.0.0     ✔ workflowsets 1.0.0
+✔ purrr        0.3.4     ✔ yardstick    1.0.0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ purrr::discard() masks scales::discard()
+✖ dplyr::filter()  masks stats::filter()
+✖ dplyr::lag()     masks stats::lag()
+✖ recipes::step()  masks stats::step()
+• Use suppressPackageStartupMessages() to eliminate package startup messages</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(ames)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ames <span class="ot">&lt;-</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(ames, <span class="at">Sale_Price =</span> <span class="fu">log10</span>(Sale_Price))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">502</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ames_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(ames, <span class="at">prop =</span> <span class="fl">0.80</span>, <span class="at">strata =</span> Sale_Price)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ames_train <span class="ot">&lt;-</span> <span class="fu">training</span>(ames_split)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ames_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(ames_split)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">linear_reg</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"lm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="workflows" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="workflows"><span class="header-section-number">1</span> Workflows</h2>
+<ul>
+<li><p>aka pipelines in <code>python</code> or <code>spark</code></p></li>
+<li><p>Binds preprocessing and modeling objects together</p>
+<ul>
+<li>e.g., PCA and least-squares estimation</li>
+</ul></li>
+</ul>
+<section id="basicscreate-model-and-add-to-workflow" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="basicscreate-model-and-add-to-workflow"><span class="header-section-number">1.1</span> Basics—Create Model and Add to Workflow</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidymodels_prefer</span>()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">linear_reg</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"lm"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>lm_wflow <span class="ot">&lt;-</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(lm_model)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>lm_wflow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: None
+Model: linear_reg()
+
+── Model ───────────────────────────────────────────────────────────────────────
+Linear Regression Model Specification (regression)
+
+Computational engine: lm </code></pre>
+</div>
+</div>
+</section>
+<section id="add-preprocessing-here-just-a-formula-bc-simple-model" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="add-preprocessing-here-just-a-formula-bc-simple-model"><span class="header-section-number">1.2</span> Add Preprocessing (here just a formula b/c simple model)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>lm_wflow <span class="ot">&lt;-</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  lm_wflow <span class="sc">|&gt;</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_formula</span>(Sale_Price <span class="sc">~</span> Longitude <span class="sc">+</span> Latitude)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>lm_wflow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: Formula
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+Sale_Price ~ Longitude + Latitude
+
+── Model ───────────────────────────────────────────────────────────────────────
+Linear Regression Model Specification (regression)
+
+Computational engine: lm </code></pre>
+</div>
+</div>
+</section>
+<section id="fit-model-in-workflow" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="fit-model-in-workflow"><span class="header-section-number">1.3</span> Fit Model in Workflow</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(lm_wflow, ames_train)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>lm_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow [trained] ══════════════════════════════════════════════════════════
+Preprocessor: Formula
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+Sale_Price ~ Longitude + Latitude
+
+── Model ───────────────────────────────────────────────────────────────────────
+
+Call:
+stats::lm(formula = ..y ~ ., data = data)
+
+Coefficients:
+(Intercept)    Longitude     Latitude  
+   -302.974       -2.075        2.710  </code></pre>
+</div>
+</div>
+</section>
+<section id="use-model-to-make-predictions" class="level3" data-number="1.4">
+<h3 data-number="1.4" class="anchored" data-anchor-id="use-model-to-make-predictions"><span class="header-section-number">1.4</span> Use Model to Make Predictions</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lm_fit, ames_test <span class="sc">|&gt;</span> <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 1
+  .pred
+  &lt;dbl&gt;
+1  5.22
+2  5.21
+3  5.28</code></pre>
+</div>
+</div>
+</section>
+<section id="model-and-preprocessor-can-be-removedupdated" class="level3" data-number="1.5">
+<h3 data-number="1.5" class="anchored" data-anchor-id="model-and-preprocessor-can-be-removedupdated"><span class="header-section-number">1.5</span> Model and Preprocessor Can be Removed/Updated</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_formula</span>(Sale_Price <span class="sc">~</span> Longitude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: Formula
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+Sale_Price ~ Longitude
+
+── Model ───────────────────────────────────────────────────────────────────────
+Linear Regression Model Specification (regression)
+
+Computational engine: lm </code></pre>
+</div>
+</div>
+</section>
+<section id="add-raw-i.e.-un-preprocessed-variables-to-workflow" class="level3" data-number="1.6">
+<h3 data-number="1.6" class="anchored" data-anchor-id="add-raw-i.e.-un-preprocessed-variables-to-workflow"><span class="header-section-number">1.6</span> Add Raw (i.e., un-preprocessed) Variables to <code>workflow</code></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>lm_wflow <span class="ot">&lt;-</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  lm_wflow <span class="sc">|&gt;</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">remove_formula</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_variables</span>(</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome =</span> Sale_Price,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">predictors =</span> <span class="fu">c</span>(Longitude, Latitude)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>lm_wflow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: Variables
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+Outcomes: Sale_Price
+Predictors: c(Longitude, Latitude)
+
+── Model ───────────────────────────────────────────────────────────────────────
+Linear Regression Model Specification (regression)
+
+Computational engine: lm </code></pre>
+</div>
+</div>
+</section>
+<section id="and-fit-model" class="level3" data-number="1.7">
+<h3 data-number="1.7" class="anchored" data-anchor-id="and-fit-model"><span class="header-section-number">1.7</span> …and Fit Model</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fit</span>(lm_wflow, ames_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow [trained] ══════════════════════════════════════════════════════════
+Preprocessor: Variables
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+Outcomes: Sale_Price
+Predictors: c(Longitude, Latitude)
+
+── Model ───────────────────────────────────────────────────────────────────────
+
+Call:
+stats::lm(formula = ..y ~ ., data = data)
+
+Coefficients:
+(Intercept)    Longitude     Latitude  
+   -302.974       -2.075        2.710  </code></pre>
+</div>
+</div>
+</section>
+<section id="special-formulas-and-inline-functions" class="level3" data-number="1.8">
+<h3 data-number="1.8" class="anchored" data-anchor-id="special-formulas-and-inline-functions"><span class="header-section-number">1.8</span> Special Formulas and Inline Functions</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(lme4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: lme4</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: Matrix</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'Matrix'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:tidyr':
+
+    expand, pack, unpack</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Orthodont, <span class="at">package =</span> <span class="st">"nlme"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lmer</span>(distance <span class="sc">~</span> Sex <span class="sc">+</span> (age <span class="sc">|</span> Subject), <span class="at">data =</span> Orthodont)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: distance ~ Sex + (age | Subject)
+   Data: Orthodont
+REML criterion at convergence: 471.1635
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ Subject  (Intercept) 7.3912        
+          age         0.6943   -0.97
+ Residual             1.3100        
+Number of obs: 108, groups:  Subject, 27
+Fixed Effects:
+(Intercept)    SexFemale  
+     24.517       -2.145  </code></pre>
+</div>
+</div>
+</section>
+<section id="problem-with-model.matrix" class="level3" data-number="1.9">
+<h3 data-number="1.9" class="anchored" data-anchor-id="problem-with-model.matrix"><span class="header-section-number">1.9</span> Problem with <code>model.matrix</code></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">model.matrix</span>(distance <span class="sc">~</span> Sex <span class="sc">+</span> (age <span class="sc">|</span> Subject), <span class="at">data =</span> Orthodont)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in Ops.ordered(age, Subject): '|' is not meaningful for ordered factors</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     (Intercept) SexFemale age | SubjectTRUE
+attr(,"assign")
+[1] 0 1 2
+attr(,"contrasts")
+attr(,"contrasts")$Sex
+[1] "contr.treatment"
+
+attr(,"contrasts")$`age | Subject`
+[1] "contr.treatment"</code></pre>
+</div>
+</div>
+</section>
+<section id="using-multilevelmod" class="level3" data-number="1.10">
+<h3 data-number="1.10" class="anchored" data-anchor-id="using-multilevelmod"><span class="header-section-number">1.10</span> Using <code>multilevelmod</code></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(multilevelmod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: multilevelmod</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>multilevel_spec <span class="ot">&lt;-</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">linear_reg</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"lmer"</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>multilevel_workflow <span class="ot">&lt;-</span> </span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pass the data along as-is:</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_variables</span>(</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcomes =</span> distance, </span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">predictors =</span> <span class="fu">c</span>(Sex, age, Subject)</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>    multilevel_spec,</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this formulat is passed to the model</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> distance <span class="sc">~</span> Sex <span class="sc">+</span> (age <span class="sc">|</span> Subject)</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>multilevel_fit <span class="ot">&lt;-</span> </span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(multilevel_workflow, <span class="at">data =</span> Orthodont)</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>multilevel_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow [trained] ══════════════════════════════════════════════════════════
+Preprocessor: Variables
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+Outcomes: distance
+Predictors: c(Sex, age, Subject)
+
+── Model ───────────────────────────────────────────────────────────────────────
+Linear mixed model fit by REML ['lmerMod']
+Formula: distance ~ Sex + (age | Subject)
+   Data: data
+REML criterion at convergence: 471.1635
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ Subject  (Intercept) 7.3912        
+          age         0.6943   -0.97
+ Residual             1.3100        
+Number of obs: 108, groups:  Subject, 27
+Fixed Effects:
+(Intercept)    SexFemale  
+     24.517       -2.145  </code></pre>
+</div>
+</div>
+</section>
+<section id="using-strata-in-survival-analysis" class="level3" data-number="1.11">
+<h3 data-number="1.11" class="anchored" data-anchor-id="using-strata-in-survival-analysis"><span class="header-section-number">1.11</span> Using <code>strata()</code> in Survival Analysis</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(censored)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: censored</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: survival</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>parametric_spec <span class="ot">&lt;-</span> <span class="fu">survival_reg</span>()</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>parametric_workflow <span class="ot">&lt;-</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_variables</span>(</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcomes =</span> <span class="fu">c</span>(fustat, futime), </span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">predictors =</span> <span class="fu">c</span>(age, rx)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    parametric_spec, </span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="fu">Surv</span>(futime, fustat) <span class="sc">~</span> age <span class="sc">+</span> <span class="fu">strata</span>(rx)</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>parametric_fit <span class="ot">&lt;-</span> </span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(parametric_workflow, <span class="at">data =</span> ovarian)</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>parametric_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow [trained] ══════════════════════════════════════════════════════════
+Preprocessor: Variables
+Model: survival_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+Outcomes: c(fustat, futime)
+Predictors: c(age, rx)
+
+── Model ───────────────────────────────────────────────────────────────────────
+Call:
+survival::survreg(formula = Surv(futime, fustat) ~ age + strata(rx), 
+    data = data, model = TRUE)
+
+Coefficients:
+(Intercept)         age 
+ 12.8734120  -0.1033569 
+
+Scale:
+     rx=1      rx=2 
+0.7695509 0.4703602 
+
+Loglik(model)= -89.4   Loglik(intercept only)= -97.1
+    Chisq= 15.36 on 1 degrees of freedom, p= 8.88e-05 
+n= 26 </code></pre>
+</div>
+</div>
+</section>
+<section id="multiple-workflows" class="level3" data-number="1.12">
+<h3 data-number="1.12" class="anchored" data-anchor-id="multiple-workflows"><span class="header-section-number">1.12</span> Multiple Workflows</h3>
+<section id="multiple-formulae" class="level4" data-number="1.12.1">
+<h4 data-number="1.12.1" class="anchored" data-anchor-id="multiple-formulae"><span class="header-section-number">1.12.1</span> Multiple Formulae</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List of Different Formulas</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>location <span class="ot">&lt;-</span> </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">longitude =</span> Sale_Price <span class="sc">~</span> Longitude,</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">latitude =</span> Sale_Price <span class="sc">~</span> Latitude, </span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">coords =</span> Sale_Price <span class="sc">~</span> Longitude <span class="sc">+</span> Latitude,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">neighborhood =</span> Sale_Price <span class="sc">~</span> Neighborhood</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="then-use-workflowsets" class="level4" data-number="1.12.2">
+<h4 data-number="1.12.2" class="anchored" data-anchor-id="then-use-workflowsets"><span class="header-section-number">1.12.2</span> Then Use <code>workflowsets</code></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(workflowsets)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>location_models <span class="ot">&lt;-</span> </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow_set</span>(</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">preproc =</span> location,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">models =</span> <span class="fu">list</span>(<span class="at">lm =</span> lm_model)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>location_models</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A workflow set/tibble: 4 × 4
+  wflow_id        info             option    result    
+  &lt;chr&gt;           &lt;list&gt;           &lt;list&gt;    &lt;list&gt;    
+1 longitude_lm    &lt;tibble [1 × 4]&gt; &lt;opts[0]&gt; &lt;list [0]&gt;
+2 latitude_lm     &lt;tibble [1 × 4]&gt; &lt;opts[0]&gt; &lt;list [0]&gt;
+3 coords_lm       &lt;tibble [1 × 4]&gt; &lt;opts[0]&gt; &lt;list [0]&gt;
+4 neighborhood_lm &lt;tibble [1 × 4]&gt; &lt;opts[0]&gt; &lt;list [0]&gt;</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="examine" class="level3" data-number="1.13">
+<h3 data-number="1.13" class="anchored" data-anchor-id="examine"><span class="header-section-number">1.13</span> Examine</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>location_models<span class="sc">$</span>info[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  workflow   preproc model      comment
+  &lt;list&gt;     &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;  
+1 &lt;workflow&gt; formula linear_reg ""     </code></pre>
+</div>
+</div>
+</section>
+<section id="extract-workflow" class="level3" data-number="1.14">
+<h3 data-number="1.14" class="anchored" data-anchor-id="extract-workflow"><span class="header-section-number">1.14</span> Extract <code>workflow</code></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extract_workflow</span>(</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  location_models,</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"coords_lm"</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: Formula
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+Sale_Price ~ Longitude + Latitude
+
+── Model ───────────────────────────────────────────────────────────────────────
+Linear Regression Model Specification (regression)
+
+Computational engine: lm </code></pre>
+</div>
+</div>
+</section>
+<section id="fit-models" class="level3" data-number="1.15">
+<h3 data-number="1.15" class="anchored" data-anchor-id="fit-models"><span class="header-section-number">1.15</span> Fit Models</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>location_models <span class="ot">&lt;-</span> </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  location_models <span class="sc">|&gt;</span> </span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">fit =</span> <span class="fu">map</span>(info, <span class="sc">~</span> <span class="fu">fit</span>(.x<span class="sc">$</span>workflow[[<span class="dv">1</span>]], ames_train))</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>location_models</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A workflow set/tibble: 4 × 5
+  wflow_id        info             option    result     fit       
+  &lt;chr&gt;           &lt;list&gt;           &lt;list&gt;    &lt;list&gt;     &lt;list&gt;    
+1 longitude_lm    &lt;tibble [1 × 4]&gt; &lt;opts[0]&gt; &lt;list [0]&gt; &lt;workflow&gt;
+2 latitude_lm     &lt;tibble [1 × 4]&gt; &lt;opts[0]&gt; &lt;list [0]&gt; &lt;workflow&gt;
+3 coords_lm       &lt;tibble [1 × 4]&gt; &lt;opts[0]&gt; &lt;list [0]&gt; &lt;workflow&gt;
+4 neighborhood_lm &lt;tibble [1 × 4]&gt; &lt;opts[0]&gt; &lt;list [0]&gt; &lt;workflow&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="examine-fit" class="level3" data-number="1.16">
+<h3 data-number="1.16" class="anchored" data-anchor-id="examine-fit"><span class="header-section-number">1.16</span> Examine Fit</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>location_models<span class="sc">$</span>fit[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow [trained] ══════════════════════════════════════════════════════════
+Preprocessor: Formula
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+Sale_Price ~ Longitude
+
+── Model ───────────────────────────────────────────────────────────────────────
+
+Call:
+stats::lm(formula = ..y ~ ., data = data)
+
+Coefficients:
+(Intercept)    Longitude  
+   -184.396       -2.025  </code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

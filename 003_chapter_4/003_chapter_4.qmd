@@ -1,0 +1,69 @@
+---
+title: "Chapter 4"
+format: 
+  html:
+    code-fold: true
+---
+
+# Ames Housing Data
+
+```{r}
+require(modeldata)
+data(ames)
+```
+
+```{r}
+dim(ames)
+```
+
+## Modeling Goal: Predict Sale Price Based on Data
+
+```{r}
+require(tidymodels)
+tidymodels::tidymodels_prefer()
+
+theme_set(
+  theme_minimal()
+)
+```
+
+```{r}
+ggplot(
+  ames, 
+  aes(
+    x = Sale_Price
+    )
+  ) +
+  geom_histogram(
+    bins = 50, 
+    col = "white"
+  ) +
+  # scale_x_continuous(labels = scales::dollar, expand = c(0, 1.05))
+  scale_x_continuous(labels = scales::dollar)
+```
+
+### Using Log 10 Scale
+
+```{r}
+ggplot(
+  ames, 
+  aes(
+    x = Sale_Price
+    )
+  ) +
+  geom_histogram(
+    bins = 50, 
+    col = "white"
+  ) +
+  scale_x_log10(
+    labels = scales::comma
+  )
+```
+
+#### "Prelogging" `Sale_Price` in Dataset
+
+```{r}
+ames <- 
+  ames |> 
+  mutate(Sale_Price = log10(Sale_Price))
+```

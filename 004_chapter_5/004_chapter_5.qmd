@@ -1,0 +1,101 @@
+---
+title: "Chapter 5"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+```{r}
+require(tidymodels)
+data(ames)
+ames <- 
+  ames |> 
+  mutate(Sale_Price = log10(Sale_Price))
+
+```
+
+# Spending Our Data
+
+-   **Training Set:** Sandbox for model building
+
+-   **Test Set:** Only used **ONCE** as final arbiter between models to determine efficacy
+
+```{r}
+tidymodels_prefer()
+
+theme_set(
+  theme_minimal()
+)
+```
+
+### Initial Split
+
+```{r}
+set.seed(501)
+
+ames_split <- 
+  initial_split(ames, prop = 0.8)
+
+ames_split
+```
+
+### Obtain Training and Testing Data
+
+```{r}
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+
+dim(ames_train)
+```
+
+### Viz of Distribution of `Sale_Price`
+
+```{r}
+ggplot(
+  ames,
+  aes(x = Sale_Price)
+  ) +
+  geom_density() +
+  geom_vline(
+    data = tibble(
+      x = quantile(ames$Sale_Price, probs = c(0.25, 0.5, 0.75))
+    ),
+    aes(
+      xintercept = x
+      ),
+    linetype = 3
+  )
+```
+
+### Using Stratified Sampling
+
+```{r}
+set.seed(502)
+ames_split <- initial_split(ames, prop = 0.8, strata = Sale_Price)
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+```
+
+### Information Leakage
+
+***Information leakage occurs when data outside the training set are used in modeling process.***
+
+## Code For Remainder of Book!
+
+```{r}
+#| eval: false
+require(tidymodels)
+data(ames)
+ames <- 
+  ames |> 
+  mutate(
+    Sale_Price = log10(Sale_Price)
+  )
+
+set.seed(502) 
+ames_split <- initial_split(ames, prop = 0.8, strata = Sale_Price)
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+```

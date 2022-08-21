@@ -1,0 +1,292 @@
+---
+title: "Chapter 7"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+```{r}
+require(tidymodels)
+data(ames)
+ames <- 
+  mutate(ames, Sale_Price = log10(Sale_Price))
+
+set.seed(502)
+ames_split <- initial_split(ames, prop = 0.80, strata = Sale_Price)
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+
+lm_model <- 
+  linear_reg() |> 
+  set_engine("lm")
+```
+
+## Workflows
+
+-   aka pipelines in `python` or `spark`
+
+-   Binds preprocessing and modeling objects together
+
+    -   e.g., PCA and least-squares estimation
+
+### Basics---Create Model and Add to Workflow
+
+```{r}
+tidymodels_prefer()
+
+lm_model <- 
+  linear_reg() |> 
+  set_engine("lm")
+
+lm_wflow <- 
+  workflow() |> 
+  add_model(lm_model)
+
+lm_wflow
+```
+
+### Add Preprocessing (here just a formula b/c simple model)
+
+```{r}
+lm_wflow <- 
+  lm_wflow |> 
+  add_formula(Sale_Price ~ Longitude + Latitude)
+
+lm_wflow
+```
+
+### Fit Model in Workflow
+
+```{r}
+lm_fit <- 
+  fit(lm_wflow, ames_train)
+
+lm_fit
+```
+
+### Use Model to Make Predictions
+
+```{r}
+
+predict(lm_fit, ames_test |> slice(1:3))
+```
+
+### Model and Preprocessor Can be Removed/Updated
+
+```{r}
+lm_fit |> 
+  update_formula(Sale_Price ~ Longitude)
+```
+
+### Add Raw (i.e., un-preprocessed) Variables to `workflow`
+
+```{r}
+lm_wflow <- 
+  lm_wflow |> 
+  remove_formula() |> 
+  add_variables(
+    outcome = Sale_Price,
+    predictors = c(Longitude, Latitude)
+  )
+
+lm_wflow
+```
+
+### ...and Fit Model
+
+```{r}
+fit(lm_wflow, ames_train)
+```
+
+### Special Formulas and Inline Functions
+
+```{r}
+require(lme4)
+data(Orthodont, package = "nlme")
+lmer(distance ~ Sex + (age | Subject), data = Orthodont)
+```
+
+### Problem with `model.matrix`
+
+```{r}
+model.matrix(distance ~ Sex + (age | Subject), data = Orthodont)
+```
+
+### Using `multilevelmod`
+
+```{r}
+require(multilevelmod)
+
+multilevel_spec <- 
+  linear_reg() |> 
+  set_engine("lmer")
+
+multilevel_workflow <- 
+  workflow() |> 
+  # Pass the data along as-is:
+  add_variables(
+    outcomes = distance, 
+    predictors = c(Sex, age, Subject)
+    ) |> 
+  add_model(
+    multilevel_spec,
+    # this formula is passed to the model
+    formula = distance ~ Sex + (age | Subject)
+  )
+
+multilevel_fit <- 
+  fit(multilevel_workflow, data = Orthodont)
+
+multilevel_fit
+  
+```
+
+### Using `strata()` in Survival Analysis
+
+```{r}
+require(censored)
+
+parametric_spec <- survival_reg()
+
+parametric_workflow <- 
+  workflow() |> 
+  add_variables(
+    outcomes = c(fustat, futime), 
+    predictors = c(age, rx)
+  ) |> 
+  add_model(
+    parametric_spec, 
+    formula = Surv(futime, fustat) ~ age + strata(rx)
+  )
+
+parametric_fit <- 
+  fit(parametric_workflow, data = ovarian)
+
+parametric_fit
+```
+
+### Multiple Workflows
+
+#### Multiple Formulae
+
+```{r}
+
+# List of Different Formulas
+
+location <- 
+  list(
+    longitude = Sale_Price ~ Longitude,
+    latitude = Sale_Price ~ Latitude, 
+    coords = Sale_Price ~ Longitude + Latitude,
+    neighborhood = Sale_Price ~ Neighborhood
+  )
+```
+
+#### Then Use `workflowsets`
+
+```{r}
+require(workflowsets)
+
+location_models <- 
+  workflow_set(
+    preproc = location,
+    models = list(lm = lm_model)
+  )
+
+location_models
+```
+
+### Examine
+
+```{r}
+location_models$info[[1]]
+```
+
+### Extract `workflow`
+
+```{r}
+extract_workflow(
+  location_models,
+  id = "coords_lm"
+)
+```
+
+### Fit Models
+
+```{r}
+location_models <- 
+  location_models |> 
+  mutate(
+    fit = map(info, ~ fit(.x$workflow[[1]], ames_train))
+  )
+
+location_models
+```
+
+### Examine Fit
+
+```{r}
+location_models$fit[[1]]
+```
+
+### Using `last_fit()` to Fit Model to Entire Training Set and Evaluate with Test
+
+```{r}
+final_lm_res <- last_fit(lm_wflow, ames_split)
+final_lm_res
+```
+
+### Extract Workflow
+
+```{r}
+
+fitted_lm_wflow <- 
+  extract_workflow(final_lm_res)
+
+fitted_lm_wflow
+```
+
+### `collect_metrics()`
+
+```{r}
+collect_metrics(final_lm_res)
+```
+
+### `collect_predictions()`
+
+```{r}
+collect_predictions(final_lm_res) |> 
+  slice(1:5)
+```
+
+### Updated Code for Next Chapters
+
+```{r}
+
+require(tidymodels)
+data(ames)
+ames <- 
+  mutate(ames, Sale_Price = log10(Sale_Price))
+
+set.seed(502)
+ames_split <- initial_split(ames, prop = 0.80, strata = Sale_Price)
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+
+lm_model <- 
+  linear_reg() |> 
+  set_engine("lm")
+
+lm_wflow <- 
+  workflow() |> 
+  add_model(lm_model) |> 
+  add_variables(
+    outcomes = Sale_Price, 
+    predictors = c(Longitude, Latitude)
+  )
+
+lm_fit <- 
+  fit(lm_wflow, ames_train)
+```
